@@ -101,25 +101,30 @@ def needs_update(current_version, request_version):
     return False
 
 
-def get_display_variable():
-    """Get the DISPLAY variable"""
-    display_var = os.environ.get("DISPLAY")
-    if display_var:
-        return display_var
-    display_var, _, _ = syscommand("echo $DISPLAY")
-    if display_var:
-        if display_var == "":
-            display_var = None
-        return display_var
-    other_displays, _, _ = syscommand(
-        "sed -zn 's/^DISPLAY=//p' /proc/*/environ 2> /dev/null | LC_ALL=C sort -zu | tr '\\0' '\\n'"
-    )
-    other_displays = other_displays.split("\n")
-    if len(other_displays) > 0:
-        if other_displays[0] == "":
-            other_displays[0] = None
-        return other_displays[0]
-    return None
+def get_display_variable():  # pylint: disable=too-many-return-statements
+    """Detect session type, display variable, and desktop environment."""
+
+    def resolve_env(var_name, lowercase=True):
+        """Helper: return environment variable value or fallback from shell."""
+        value = os.environ.get(var_name)
+        if not value:
+            value, _, _ = syscommand(f"echo ${var_name}")
+        value = (value or "").strip()
+        if not value:
+            return None
+        return value.lower() if lowercase else value
+
+    # Detect session and desktop environment
+    sessiontype_var = resolve_env("XDG_SESSION_TYPE")
+    desktop_var = resolve_env("XDG_CURRENT_DESKTOP")
+
+    # Detect display variable based on session type (keep case)
+    if sessiontype_var == "wayland":
+        display_var = resolve_env("WAYLAND_DISPLAY", lowercase=False)
+    else:
+        display_var = resolve_env("DISPLAY", lowercase=False)
+
+    return sessiontype_var, display_var, desktop_var
 
 
 def text_to_topic(text):

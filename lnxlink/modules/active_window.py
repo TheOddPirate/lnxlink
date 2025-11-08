@@ -1,3 +1,4 @@
+#todo implement fully working python code for wayland on kde
 """Gets the active window"""
 from lnxlink.modules.scripts.helpers import import_install_package, get_display_variable
 
@@ -27,13 +28,17 @@ class Addon:
 
     def get_info(self):
         """Gather information from the system"""
-        display_variable = get_display_variable()
+        sessiontype_variable, display_variable, _ = get_display_variable()
+
         if display_variable is None:
             return ""
-        display = self.lib["xlib"].display.Display(display_variable)
-        ewmh = self.lib["ewmh"].EWMH(_display=display)
-        win = ewmh.getActiveWindow()
-        window_name = ewmh.getWmName(win)
-        if window_name is None:
-            return None
-        return window_name.decode()
+        if sessiontype_variable is not None and sessiontype_variable == "x11":
+            display = self.lib["xlib"].display.Display(display_variable)
+            ewmh = self.lib["ewmh"].EWMH(_display=display)
+            win = ewmh.getActiveWindow()
+            window_name = ewmh.getWmName(win)
+            if window_name is None:
+                return None
+            return window_name.decode()
+
+        return ""

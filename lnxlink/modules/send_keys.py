@@ -27,8 +27,8 @@ class Addon:
 
     def start_control(self, topic, data):
         """Control system"""
-        display_variable = get_display_variable()
-        if display_variable is not None:
+        sessiontype_variable, display_variable, _ = get_display_variable()
+        if display_variable and sessiontype_variable == "x11":
             os.environ["DISPLAY"] = display_variable
             logger.info("Initializing empty DISPLAY environment variable")
         syscommand(f"xdotool key {data}")

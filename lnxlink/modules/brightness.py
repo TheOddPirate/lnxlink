@@ -79,10 +79,13 @@ class Addon:
 
     def _get_displays(self):
         """Get all the displays"""
-        self.display_variable = get_display_variable()
+        sessiontype_variable, display_variable, desktop_var = get_display_variable()
+        self.display_variable = display_variable
+        self.sessiontype_variable = sessiontype_variable
+        self.desktop_variable = desktop_var
         displays = {}
         disp_env_cmd = ""
-        if self.display_variable is not None:
+        if self.display_variable and sessiontype_variable.lower() == "x11":
             disp_env_cmd = f" --display {self.display_variable}"
 
         stdout, _, _ = syscommand(

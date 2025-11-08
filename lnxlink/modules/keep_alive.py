@@ -44,7 +44,8 @@ class Addon:
 
         # Check if DPMS is active
         if which("xset"):
-            display_variable = get_display_variable()
+            _, display_variable, _ = get_display_variable()
+
             if display_variable is not None:
                 stdout_xset, _, _ = syscommand(f"xset -display {display_variable} q")
                 xset_pattern = re.compile(

@@ -49,7 +49,7 @@ class Addon:
 
     def get_info(self):
         """Gather information from the system"""
-        display_variable = get_display_variable()
+        _, display_variable, _ = get_display_variable()
         if not self.started and display_variable is not None:
             hm = self.lib["xlib_hotkeys"].HotKeysManager(display_variable)
             actions = self.lnxlink.config["settings"]["hotkeys"]

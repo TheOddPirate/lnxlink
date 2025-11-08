@@ -1,3 +1,4 @@
+# pylint: disable=fixme  # TODO remove after all missing features are implemented
 """Checks if a window is in fullscreen"""
 from lnxlink.modules.scripts.helpers import import_install_package, get_display_variable
 
@@ -32,17 +33,18 @@ class Addon:
             "is_fullscreen": "OFF",
             "window": "",
         }
-        display_variable = get_display_variable()
+        sessiontype_variable, display_variable, _ = get_display_variable()
         if display_variable is None:
             return data
-        display = self.lib["xlib"].display.Display(display_variable)
-        ewmh = self.lib["ewmh"].EWMH(_display=display)
-        windows = ewmh.getClientList()
-        for win in windows:
-            state = ewmh.getWmState(win, True)
-            name = ewmh.getWmName(win)
-            if "_NET_WM_STATE_FULLSCREEN" in state:
-                data["is_fullscreen"] = "ON"
-                data["window"] = name.decode()
-
+        if sessiontype_variable is not None and sessiontype_variable == "x11":
+            display = self.lib["xlib"].display.Display(display_variable)
+            ewmh = self.lib["ewmh"].EWMH(_display=display)
+            windows = ewmh.getClientList()
+            for win in windows:
+                state = ewmh.getWmState(win, True)
+                name = ewmh.getWmName(win)
+                if "_NET_WM_STATE_FULLSCREEN" in state:
+                    data["is_fullscreen"] = "ON"
+                    data["window"] = name.decode()
+        # Todo implement else for other enviornments
         return data

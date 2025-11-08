@@ -54,7 +54,7 @@ class Addon:
 
     def start_control(self, topic, data):
         """Control system"""
-        display_variable = get_display_variable()
+        _, display_variable, _ = get_display_variable()
         if display_variable is not None:
             os.environ["DISPLAY"] = display_variable
             logger.info("Initializing empty DISPLAY environment variable")

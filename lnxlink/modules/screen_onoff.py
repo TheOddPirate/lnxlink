@@ -14,6 +14,8 @@ class Addon:
         """Setup addon"""
         self.name = "Screen OnOff"
         self.display_variable = None
+        self.sessiontype_variable = None
+        self.desktop_variable = None
         if which("xset") is None:
             raise SystemError("System command 'xset' not found")
 
@@ -29,8 +31,12 @@ class Addon:
     def get_info(self):
         """Gather information from the system"""
         status = "ON"
-        self.display_variable = get_display_variable()
-        if self.display_variable is not None:
+        if not self.display_variable:
+            sessiontype_variable, display_variable, desktop_var = get_display_variable()
+            self.display_variable = display_variable
+            self.sessiontype_variable = sessiontype_variable
+            self.desktop_variable = desktop_var
+        if self.display_variable:
             command = f"xset -display {self.display_variable} q"
             stdout, _, _ = syscommand(command)
             match = re.findall(r"Monitor is (\w*)", stdout)

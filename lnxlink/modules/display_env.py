@@ -11,7 +11,8 @@ class Addon:
 
     def get_info(self):
         """Gather information from the system"""
-        return get_display_variable()
+        _, display_var, _ = get_display_variable()
+        return display_var
 
     def exposed_controls(self):
         """Exposes to home assistant"""

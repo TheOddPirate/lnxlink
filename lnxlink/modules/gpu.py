@@ -90,7 +90,8 @@ class Addon:
         """For older GPUs, use nvidia-settings to get gpu usage"""
         if math.isnan(gpu_util):
             gpu_util = None
-            display = get_display_variable()
+            _, display_variable, _ = get_display_variable()
+            display = display_variable
             if display:
                 if which("nvidia-settings") is not None:
                     settings_out, _, _ = syscommand(
